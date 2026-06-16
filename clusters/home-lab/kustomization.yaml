@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
   - apps/demo.yaml
   - infra/metallb.yaml
+  - infra/ingress-nginx.yaml
+  - infra/metrics-server.yaml
+  - infra/cert-manager.yaml
+  - infra/cert-manager-issuers.yaml
