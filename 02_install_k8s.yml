@@ -1,0 +1,87 @@
+---
+- name: Install containerd and Kubernetes tools
+  hosts: k8s_cluster
+  become: true
+
+  vars:
+    kubernetes_version_repo: "v1.35"
+
+  tasks:
+    - name: Install containerd
+      ansible.builtin.apt:
+        name: containerd
+        state: present
+        update_cache: true
+        lock_timeout: 120
+
+    - name: Create containerd config directory
+      ansible.builtin.file:
+        path: /etc/containerd
+        state: directory
+        mode: "0755"
+
+    - name: Generate containerd default config
+      ansible.builtin.command: containerd config default
+      register: containerd_config
+      changed_when: false
+
+    - name: Write containerd config
+      ansible.builtin.copy:
+        dest: /etc/containerd/config.toml
+        content: "{{ containerd_config.stdout }}"
+        mode: "0644"
+
+    - name: Enable SystemdCgroup for containerd
+      ansible.builtin.replace:
+        path: /etc/containerd/config.toml
+        regexp: 'SystemdCgroup = false'
+        replace: 'SystemdCgroup = true'
+
+    - name: Ensure CRI plugin is not disabled
+      ansible.builtin.replace:
+        path: /etc/containerd/config.toml
+        regexp: 'disabled_plugins = \["cri"\]'
+        replace: 'disabled_plugins = []'
+
+    - name: Restart and enable containerd
+      ansible.builtin.systemd:
+        name: containerd
+        state: restarted
+        enabled: true
+
+    - name: Create apt keyrings directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Kubernetes apt key
+      ansible.builtin.shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version_repo }}/deb/Release.key \
+        | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes apt repository
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: |
+          deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ kubernetes_version_repo }}/deb/ /
+
+    - name: Install kubelet kubeadm kubectl
+      ansible.builtin.apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+        update_cache: true
+
+    - name: Hold Kubernetes packages
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl

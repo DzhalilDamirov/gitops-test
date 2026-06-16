@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: demo-local
+  namespace: demo
+spec:
+  secretName: demo-local-tls
+  dnsNames:
+    - demo.local
+  issuerRef:
+    name: local-ca
+    kind: ClusterIssuer
+    group: cert-manager.io
