@@ -1,0 +1,44 @@
+replicaCount: 1
+
+auth:
+  username: admin
+  password: admin123
+  erlangCookie: "home-lab-rabbitmq-cookie"
+
+persistence:
+  enabled: true
+  storageClass: nfs-client
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: rabbitmq.local
+  path: /
+  pathType: Prefix
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+metrics:
+  enabled: false
+
+volumePermissions:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 50m
+      memory: 64Mi

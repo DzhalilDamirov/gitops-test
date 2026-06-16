@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - apps/demo.yaml
+  - apps/rabbitmq.yaml
   - infra/metallb.yaml
   - infra/ingress-nginx.yaml
   - infra/metrics-server.yaml
