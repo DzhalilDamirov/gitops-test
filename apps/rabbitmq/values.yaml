@@ -5,18 +5,22 @@ auth:
   password: admin123
   erlangCookie: "home-lab-rabbitmq-cookie"
 
+clustering:
+  enabled: false
+
 persistence:
   enabled: true
   storageClass: nfs-client
   size: 2Gi
 
+resourcesPreset: "none"
 resources:
   requests:
     cpu: 100m
     memory: 256Mi
   limits:
     cpu: 500m
-    memory: 512Mi
+    memory: 768Mi
 
 service:
   type: ClusterIP
@@ -35,6 +39,7 @@ metrics:
 
 volumePermissions:
   enabled: true
+  resourcesPreset: "none"
   resources:
     requests:
       cpu: 10m
