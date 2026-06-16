@@ -1,0 +1,59 @@
+configs:
+  params:
+    server.insecure: "true"
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
+
+applicationSet:
+  enabled: false
+
+controller:
+  replicas: 1
+  nodeSelector:
+    ingress-ready: "true"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+
+repoServer:
+  replicas: 1
+  nodeSelector:
+    ingress-ready: "true"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+
+server:
+  replicas: 1
+  nodeSelector:
+    ingress-ready: "true"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 300m
+      memory: 384Mi
+
+redis:
+  nodeSelector:
+    ingress-ready: "true"
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 150m
+      memory: 192Mi
