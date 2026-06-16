@@ -8,3 +8,11 @@ storageClass:
   archiveOnDelete: true
   reclaimPolicy: Delete
   accessModes: ReadWriteMany
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi

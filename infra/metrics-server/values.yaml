@@ -3,4 +3,12 @@ replicas: 1
 args:
   - --kubelet-insecure-tls
   - --kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP
-  - --metric-resolution=15s
+  - --metric-resolution=30s
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
