@@ -21,6 +21,18 @@ spec:
           service:
             type: ClusterIP
 
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: local-ca
+            hosts:
+              - grafana.local
+            tls:
+              - secretName: grafana-local-tls
+                hosts:
+                  - grafana.local
+
           persistence:
             enabled: true
             storageClassName: nfs-client
