@@ -38,12 +38,4 @@ metrics:
   enabled: false
 
 volumePermissions:
-  enabled: true
-  resourcesPreset: "none"
-  resources:
-    requests:
-      cpu: 10m
-      memory: 32Mi
-    limits:
-      cpu: 50m
-      memory: 64Mi
+  enabled: false
