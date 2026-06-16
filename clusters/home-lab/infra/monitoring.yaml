@@ -13,10 +13,19 @@ spec:
     helm:
       releaseName: monitoring
       values: |
+        defaultRules:
+          create: false
+
+        alertmanager:
+          enabled: false
+
         grafana:
           enabled: true
           adminUser: admin
           adminPassword: admin123456
+
+          nodeSelector:
+            ingress-ready: "true"
 
           service:
             type: ClusterIP
@@ -38,9 +47,46 @@ spec:
             storageClassName: nfs-client
             size: 1Gi
 
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+
+        prometheusOperator:
+          nodeSelector:
+            ingress-ready: "true"
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 150m
+              memory: 256Mi
+
         prometheus:
           prometheusSpec:
-            retention: 3d
+            nodeSelector:
+              ingress-ready: "true"
+
+            scrapeInterval: 10m
+            scrapeTimeout: 30s
+            evaluationInterval: 10m
+
+            retention: 1d
+            retentionSize: 1500MB
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 512Mi
+              limits:
+                cpu: 500m
+                memory: 1536Mi
+
             storageSpec:
               volumeClaimTemplate:
                 spec:
@@ -49,19 +95,28 @@ spec:
                     - ReadWriteOnce
                   resources:
                     requests:
-                      storage: 4Gi
+                      storage: 3Gi
 
-        alertmanager:
-          alertmanagerSpec:
-            storage:
-              volumeClaimTemplate:
-                spec:
-                  storageClassName: nfs-client
-                  accessModes:
-                    - ReadWriteOnce
-                  resources:
-                    requests:
-                      storage: 1Gi
+        kube-state-metrics:
+          nodeSelector:
+            ingress-ready: "true"
+
+          resources:
+            requests:
+              cpu: 25m
+              memory: 96Mi
+            limits:
+              cpu: 100m
+              memory: 192Mi
+
+        prometheus-node-exporter:
+          resources:
+            requests:
+              cpu: 20m
+              memory: 32Mi
+            limits:
+              cpu: 80m
+              memory: 96Mi
 
         kubeEtcd:
           enabled: false
@@ -70,6 +125,9 @@ spec:
           enabled: false
 
         kubeScheduler:
+          enabled: false
+
+        kubeProxy:
           enabled: false
 
   destination:
