@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://charts.bitnami.com/bitnami
+    chart: rabbitmq
+    targetRevision: "*"
+    helm:
+      releaseName: rabbitmq
+      values: |
+        replicaCount: 1
+
+        auth:
+          username: admin
+          password: admin123456
+          erlangCookie: home-lab-rabbitmq-cookie
+
+        persistence:
+          enabled: true
+          storageClass: nfs-client
+          size: 8Gi
+
+        service:
+          type: ClusterIP
+
+        metrics:
+          enabled: true
+
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rabbitmq
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

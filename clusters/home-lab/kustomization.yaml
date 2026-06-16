@@ -9,3 +9,4 @@ resources:
   - infra/cert-manager.yaml
   - infra/cert-manager-issuers.yaml
   - infra/nfs-provisioner.yaml
+  - apps/rabbitmq.yaml
